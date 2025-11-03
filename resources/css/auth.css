@@ -1,0 +1,83 @@
+/* Authentication page specific styles */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        transform: translateY(20px); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateY(0); 
+        opacity: 1; 
+    }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.input-focus:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.1);
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Background decorations */
+.auth-bg-decoration {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.floating-shape {
+    position: absolute;
+    border-radius: 50%;
+    mix-blend-mode: multiply;
+    filter: blur(40px);
+    opacity: 0.2;
+}
+
+.floating-shape-1 {
+    top: -16px;
+    left: -16px;
+    width: 18rem;
+    height: 18rem;
+    background-color: rgb(147, 197, 253);
+    animation: float 3s ease-in-out infinite;
+}
+
+.floating-shape-2 {
+    top: -16px;
+    right: -16px;
+    width: 18rem;
+    height: 18rem;
+    background-color: rgb(196, 181, 253);
+    animation: float 3s ease-in-out infinite;
+    animation-delay: 2s;
+}
+
+.floating-shape-3 {
+    bottom: -32px;
+    left: 5rem;
+    width: 18rem;
+    height: 18rem;
+    background-color: rgb(251, 207, 232);
+    animation: float 3s ease-in-out infinite;
+    animation-delay: 4s;
+}
