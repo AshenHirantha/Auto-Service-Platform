@@ -19,6 +19,10 @@ use App\Http\Controllers\Vendor\ReviewsController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 
+use App\Http\Controllers\customer\PartController as CustomerPartController;
+use App\Http\Controllers\customer\PartsOrderController as CustomerPartsOrderController;
+
+
 // Main landing page
 Route::get('/', function () {
     return view('welcome');
@@ -123,6 +127,10 @@ Route::prefix('vendor')
 
 Route::prefix('customer')->middleware(['auth', EnsureUserTypeAccess::class . ':customer'])->group(function () {
     Route::get('/', fn () => view('customer.dashboard'))->name('customer.dashboard');
+    Route::get('/parts-orders', [CustomerPartsOrderController::class, 'index'])->name('parts-orders.index');
+    Route::get('/parts-orders/{order}', [CustomerPartsOrderController::class, 'show'])->name('parts-orders.show');
+    Route::get('/parts', [CustomerPartController::class, 'index'])->name('parts.index');
+    Route::get('/parts/{part}', [CustomerPartController::class, 'show'])->name('parts.show');
 });
 
 Route::prefix('service-station')->middleware(['auth', EnsureUserTypeAccess::class . ':service_station'])->group(function () {
