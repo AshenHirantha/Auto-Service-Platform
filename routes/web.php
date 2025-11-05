@@ -79,7 +79,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', EnsureUserTypeAccess
     Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
 
     Route::resource('users', UserController::class)->except(['show']);
-    Route::resource('settings', SettingController::class)->only(['index', 'update']);
+    // Removed duplicate resource for settings to avoid name collisions with explicit routes
     Route::get('/', fn () => view('admin.dashboard'))->name('dashboard');
 });
 
@@ -125,19 +125,23 @@ Route::prefix('vendor')
 
 // User-specific routes
 
-Route::prefix('customer')->middleware(['auth', EnsureUserTypeAccess::class . ':customer'])->group(function () {
-    Route::get('/', fn () => view('customer.dashboard'))->name('customer.dashboard');
-    Route::get('/parts-orders', [CustomerPartsOrderController::class, 'index'])->name('parts-orders.index');
-    Route::get('/parts-orders/{order}', [CustomerPartsOrderController::class, 'show'])->name('parts-orders.show');
-    Route::get('/parts', [CustomerPartController::class, 'index'])->name('parts.index');
-    Route::get('/parts/{part}', [CustomerPartController::class, 'show'])->name('parts.show');
+Route::prefix('customer')->middleware(['auth', EnsureUserTypeAccess::class . ':customer'])->name('customer.')->group(function () {
+
+    // Customer dashboard
+    Route::get('/', fn () => view('customer.dashboard'))->name('dashboard');
+    
+    Route::get('/orders', [PartsOrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [PartsOrderController::class, 'show'])->name('orders.show');
+
+    // Back to Customer dashboard
+    Route::get('/back', fn () => redirect()->route('customer.dashboard'))->name('back');
 });
+
 
 Route::prefix('service-station')->middleware(['auth', EnsureUserTypeAccess::class . ':service_station'])->group(function () {
     Route::get('/', fn () => view('service_station.dashboard'))->name('service_station.dashboard');
 });
 
-// Duplicate vendor dashboard route removed; controller-based route above provides vendor.dashboard
 
 // Fallback
 Route::fallback(fn () => redirect('/'));

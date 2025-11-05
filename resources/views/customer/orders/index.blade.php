@@ -20,10 +20,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <a href="{{ route('dashboard') }}" class="text-white text-xl font-bold">📋 My Orders</a>
+                    <a href="{{ route('customer.dashboard') }}" class="text-white text-xl font-bold">📋 My Orders</a>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="{{ route('dashboard') }}" class="text-green-100 hover:text-white text-sm">Dashboard</a>
+                    <a href="{{ route('customer.dashboard') }}" class="text-green-100 hover:text-white text-sm">Dashboard</a>
                     <span class="text-green-100 text-sm">Welcome, {{ auth()->user()->name }}</span>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
@@ -44,7 +44,7 @@
                 <ul class="divide-y divide-gray-200">
                     @forelse($orders as $order)
                         <li>
-                            <a href="#" class="block hover:bg-gray-50">
+                            <a href="{{ route('customer.orders.show', ['order' => $order->id]) }}" class="block hover:bg-gray-50">
                                 <div class="px-4 py-4 sm:px-6">
                                     <div class="flex items-center justify-between">
                                         <p class="text-sm font-medium text-green-600 truncate">

@@ -12,6 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withProviders([
+        \App\Providers\FilamentServiceProvider::class,
+    ])
     ->withMiddleware(function (Middleware $middleware) {
                 // Register your custom middleware aliases here
         $middleware->alias([
@@ -23,4 +26,3 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
-

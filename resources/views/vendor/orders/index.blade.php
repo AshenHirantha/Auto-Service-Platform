@@ -11,8 +11,9 @@
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">#</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Order Date</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Customer</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Items</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Placed</th>
                     <th class="px-4 py-3"></th>
                 </tr>
             </thead>
@@ -20,8 +21,9 @@
                 @forelse($orders as $order)
                     <tr>
                         <td class="px-4 py-3">{{ $order->id }}</td>
+                        <td class="px-4 py-3">{{ $order->order_date->format('Y-m-d') }}</td>
+                        <td class="px-4 py-3">{{ $order->user->name }}</td>
                         <td class="px-4 py-3">{{ $order->items_count }}</td>
-                        <td class="px-4 py-3">{{ $order->created_at->format('Y-m-d H:i') }}</td>
                         <td class="px-4 py-3 text-right">
                             <a href="{{ route('vendor.orders.show', $order) }}" class="text-indigo-600">View</a>
                         </td>

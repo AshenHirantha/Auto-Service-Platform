@@ -66,8 +66,9 @@ class PartsOrder extends Model
         return $this->morphMany(PaymentTransaction::class, 'reference');
     }
 
-    public function items() 
-    { 
-        return $this->hasMany(\App\Models\OrderItem::class, 'parts_order_id'); 
+    public function items()
+    {
+        // Alias used by vendor views/controllers; ensure it matches the FK in migrations
+        return $this->hasMany(OrderItem::class, 'order_id');
     }
 }

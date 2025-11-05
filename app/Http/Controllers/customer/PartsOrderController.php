@@ -15,6 +15,15 @@ class PartsOrderController extends Controller
     public function index()
     {
         $orders = PartsOrder::where('user_id', Auth::id())->latest()->paginate(10);
-        return view('parts-orders.index', compact('orders'));
+        return view('customer.orders.index', compact('orders'));
+    }
+
+    public function show(int $id)
+    {
+        $order = PartsOrder::where('id', $id)
+        ->where('user_id', Auth::id())
+        ->firstOrFail();
+
+        return view('customer.orders.show', compact('order'));
     }
 }
