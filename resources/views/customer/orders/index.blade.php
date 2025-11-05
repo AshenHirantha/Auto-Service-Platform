@@ -1,45 +1,16 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>My Orders - Auto Service Platform</title>
+@extends('layouts.customer', ['layoutOption' => 'default'])
+@section('title', 'Customer Dashboard')
+@section('header')
+    <h1 class="text-3xl font-bold text-gray-900">Customer Dashboard</h1>
+@endsection
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        }
-    </style>
-</head>
-<body class="bg-gray-50">
-    <!-- Navigation -->
-    <nav class="gradient-bg shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <a href="{{ route('customer.dashboard') }}" class="text-white text-xl font-bold">📋 My Orders</a>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <a href="{{ route('customer.dashboard') }}" class="text-green-100 hover:text-white text-sm">Dashboard</a>
-                    <span class="text-green-100 text-sm">Welcome, {{ auth()->user()->name }}</span>
-                    <form method="POST" action="{{ route('logout') }}" class="inline">
-                        @csrf
-                        <button type="submit" class="bg-white/20 text-white px-4 py-2 rounded hover:bg-white/30 transition-colors text-sm">
-                            Logout
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </nav>
+@section('content')
 
     <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div class="px-4 py-6 sm:px-0">
             <h2 class="text-2xl font-semibold text-gray-800 mb-6">Your Parts Orders</h2>
-
+        </div>
+        <div class="px-4 py-6 sm:px-0">
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <ul class="divide-y divide-gray-200">
                     @forelse($orders as $order)
@@ -75,7 +46,9 @@
                 </ul>
             </div>
             <div class="mt-4">{{ $orders->links() }}</div>
+            </div>
+                  <a href="{{ route('customer.orders.browse') }}" class="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Order Parts</a>
+            </div>
         </div>
     </div>
-</body>
-</html>
+@endsection

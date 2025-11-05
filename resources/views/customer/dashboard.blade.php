@@ -139,7 +139,7 @@
                                 <h3 class="text-lg font-medium text-gray-900">Order Parts</h3>
                                 <p class="text-sm text-gray-500 mt-1">Browse and order vehicle parts</p>
                                 <div class="mt-3">
-                                    <a href="{{ route('customer.orders.index') }}">
+                                    <a href="{{ route('customer.orders.browse') }}">
                                         <button class="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700 transition-colors">
                                             Shop Parts
                                         </button>

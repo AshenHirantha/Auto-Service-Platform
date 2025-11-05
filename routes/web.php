@@ -16,11 +16,12 @@ use App\Http\Controllers\Vendor\ProfileController;
 use App\Http\Controllers\Vendor\StockController;
 use App\Http\Controllers\Vendor\ReportsController;
 use App\Http\Controllers\Vendor\ReviewsController;
+
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 
-use App\Http\Controllers\customer\PartController as CustomerPartController;
-use App\Http\Controllers\customer\PartsOrderController as CustomerPartsOrderController;
+use App\Http\Controllers\customer\PartController;
+use App\Http\Controllers\customer\PartsOrderController;
 
 
 // Main landing page
@@ -125,16 +126,26 @@ Route::prefix('vendor')
 
 // User-specific routes
 
-Route::prefix('customer')->middleware(['auth', EnsureUserTypeAccess::class . ':customer'])->name('customer.')->group(function () {
+Route::prefix('customer')
+->middleware(['auth', EnsureUserTypeAccess::class . ':customer'])
+->name('customer.')
+->group(function () {
 
     // Customer dashboard
     Route::get('/', fn () => view('customer.dashboard'))->name('dashboard');
     
     Route::get('/orders', [PartsOrderController::class, 'index'])->name('orders.index');
-    Route::get('/orders/{order}', [PartsOrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/browse', [PartsOrderController::class, 'browse'])->name('orders.browse');
+    Route::get('/orders/{order}', [PartsOrderController::class, 'show'])->whereNumber('order')->name('orders.show');
+    Route::post('/orders/store', [PartsOrderController::class, 'store'])->name('orders.store');
+    Route::post('/orders/cart/add', [PartsOrderController::class, 'addToCart'])->name('orders.cart.add');
+    Route::get('/orders/cart', [PartsOrderController::class, 'cart'])->name('orders.cart');
+    Route::post('/orders/checkout', [PartsOrderController::class, 'checkout'])->name('orders.checkout');
+ 
 
     // Back to Customer dashboard
     Route::get('/back', fn () => redirect()->route('customer.dashboard'))->name('back');
+    
 });
 
 
