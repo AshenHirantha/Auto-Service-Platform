@@ -141,7 +141,9 @@ Route::prefix('customer')
     Route::post('/orders/cart/add', [PartsOrderController::class, 'addToCart'])->name('orders.cart.add');
     Route::get('/orders/cart', [PartsOrderController::class, 'cart'])->name('orders.cart');
     Route::post('/orders/checkout', [PartsOrderController::class, 'checkout'])->name('orders.checkout');
- 
+    Route::post('/orders/cart/clear', [PartsOrderController::class, 'clearCart'])->name('orders.clearCart');
+    Route::post('/orders/cart/update-quantity', [PartsOrderController::class, 'updateQuantity'])->name('orders.updateQuantity');
+    Route::post('/orders/cart/update-shipping-address', [PartsOrderController::class, 'updateShippingAddress'])->name('orders.updateShippingAddress');
 
     // Back to Customer dashboard
     Route::get('/back', fn () => redirect()->route('customer.dashboard'))->name('back');

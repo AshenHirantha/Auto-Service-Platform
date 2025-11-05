@@ -101,6 +101,18 @@ class PartsOrderController extends Controller
             return back()->withErrors(['cart' => 'Your cart is empty.']);
         }
 
+        // Check for missing shipping addresses
+        $missingShipping = [];
+        foreach ($cart as $vendorId => $group) {
+            if (empty($group['shipping_address'])) {
+                $missingShipping[] = $group['vendor_name'] ?? ('Vendor #' . $vendorId);
+            }
+        }
+        if (!empty($missingShipping)) {
+            $msg = 'Please enter a shipping address ';
+            return back()->withErrors(['shipping_address' => $msg])->withInput();
+        }
+
         DB::transaction(function () use ($cart) {
             foreach ($cart as $vendorId => $group) {
                 $total = 0.0;
@@ -114,7 +126,7 @@ class PartsOrderController extends Controller
                     'order_date'    => now(),
                     'total_amount'  => $total,
                     'status'        => 'pending',
-                    'shipping_address' => null,
+                    'shipping_address' => $group['shipping_address'] ?? null,
                     'tracking_info'    => null,
                 ]);
 
@@ -126,6 +138,8 @@ class PartsOrderController extends Controller
                         'unit_price' => (float)$item['unit_price'],
                         'subtotal'   => ((float)$item['unit_price']) * ((int)$item['quantity']),
                         'status'     => 'pending',
+                        'shipping_address' => $group['shipping_address'],
+                        'tracking_info'    => null
                     ]);
                 }
             }
@@ -134,6 +148,65 @@ class PartsOrderController extends Controller
         Session::forget('parts_cart');
 
         return redirect()->route('customer.orders.index')->with('status', 'Order request sent to vendor(s).');
+    }
+
+    /**
+     * Clear the cart session.
+     */
+    public function clearCart(): \Illuminate\Http\RedirectResponse
+    {
+        // Clear the cart only after the transaction is successful
+        Session::forget('parts_cart');
+        return back()->with('status', 'Cart cleared.');
+    }
+
+    /**
+     * Update the quantity of a cart item.
+     */
+    public function updateQuantity(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        $data = $request->validate([
+            'vendor_id' => ['required', 'integer'],
+            'item_key'  => ['required'],
+            'quantity'  => ['required', 'integer', 'min:1'],
+        ]);
+
+        $cart = Session::get('parts_cart', []);
+        $vendorId = $data['vendor_id'];
+        $itemKey = $data['item_key'];
+        $quantity = $data['quantity'];
+
+        if (isset($cart[$vendorId]['items'][$itemKey])) {
+            $available = $cart[$vendorId]['items'][$itemKey]['available'] ?? 1;
+            $cart[$vendorId]['items'][$itemKey]['quantity'] = min($quantity, $available);
+            Session::put('parts_cart', $cart);
+            return back()->with('status', 'Quantity updated.');
+        }
+
+        return back()->withErrors(['cart' => 'Item not found in cart.']);
+    }
+
+    /**
+     * Update the shipping address for a vendor group in the cart.
+     */
+    public function updateShippingAddress(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        $data = $request->validate([
+            'vendor_id' => ['required', 'integer'],
+            'shipping_address' => ['required', 'string', 'max:255'],
+        ]);
+
+        $cart = Session::get('parts_cart', []);
+        $vendorId = $data['vendor_id'];
+        $address = $data['shipping_address'];
+
+        if (isset($cart[$vendorId])) {
+            $cart[$vendorId]['shipping_address'] = $address;
+            Session::put('parts_cart', $cart);
+            return back()->with('status', 'Shipping address updated.');
+        }
+
+        return back()->withErrors(['cart' => 'Vendor not found in cart.']);
     }
 
 }
