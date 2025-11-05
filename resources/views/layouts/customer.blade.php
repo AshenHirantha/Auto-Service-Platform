@@ -17,7 +17,7 @@
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <a href="{{ route('customer.dashboard') }}" class="text-white text-xl font-bold">
-                        ?? Customer Portal
+                        👤 Customer Portal
                     </a>
                 </div>
                 <div class="flex items-center space-x-4">
