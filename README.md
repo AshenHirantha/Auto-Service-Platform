@@ -164,7 +164,7 @@ The project enhances efficiency, transparency, and automation within the automob
 
 ## 👨‍💻 Author & Contribution
 
-**Author:** [Your Name]  
+**Author:** Ashen Rajakulathilaka  
 **Role:** Full-stack Developer  
 **Contribution:**  
 - End-to-end implementation of Customer, Vendor, and Admin modules  
