@@ -13,7 +13,7 @@
                 <div class="flex items-center justify-between py-2 border-b last:border-b-0">
                     <div>
                         <div class="font-medium">{{ $item->part?->name ?? 'Part #'.$item->part_id }}</div>
-                        <div class="text-xs text-gray-500">Status: {{ $item->status?->name ?? '—' }}</div>
+                        <div class="text-xs text-gray-500">Status: {{ $order->status ?? '—' }}</div>
                     </div>
                     <div class="text-right">
                         <div>Qty: {{ $item->quantity }}</div>

@@ -13,7 +13,7 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Image</th>
+                    <!-- <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Image</th> -->
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Name</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Category</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Manufacturer</th>
@@ -24,13 +24,13 @@
             <tbody class="divide-y divide-gray-100 bg-white">
                 @forelse($parts as $part)
                     <tr>
-                        <td class="px-4 py-3">
+                        <!-- <td class="px-4 py-3">
                             @if(!empty($part->thumb_url))
                                 <img src="{{ $part->thumb_url }}" alt="{{ $part->name }}" class="h-12 w-12 object-cover rounded">
                             @else
                                 <div class="h-12 w-12 bg-gray-100 rounded flex items-center justify-center text-gray-400 text-[10px]">No Image</div>
                             @endif
-                        </td>
+                        </td> -->
                         <td class="px-4 py-3">{{ $part->name }}</td>
                         <td class="px-4 py-3">{{ $part->category }}</td>
                         <td class="px-4 py-3">{{ $part->manufacturer }}</td>

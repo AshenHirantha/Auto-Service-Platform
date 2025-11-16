@@ -25,8 +25,8 @@
                             <td class="px-4 py-3">{{ $part->name }}</td>
                             <td class="px-4 py-3">{{ $part->category }}</td>
                             <td class="px-4 py-3">{{ $part->manufacturer }}</td>
-                            <td class="px-4 py-3">{{ $part->vendor_qty ?? '-' }}</td>
-                            <td class="px-4 py-3">{{ $part->vendor_availability ?? '-' }}</td>
+                            <td class="px-4 py-3">{{ $part->stock_qty ?? '-' }}</td>
+                            <td class="px-4 py-3">{{ $part->stock_availability ?? '-' }}</td>
                             <td class="px-4 py-3 text-right">
                                 <input type="number" name="reorder_quantity" min="1" value="1" class="w-24 border rounded px-2 py-1" placeholder="Qty">
                                 <button class="px-3 py-1 bg-indigo-600 text-white rounded">Re-order Stocks</button>

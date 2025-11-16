@@ -7,6 +7,7 @@ use App\Models\Part;
 use App\Models\PartImage;
 use App\Models\PartsInventory;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
@@ -112,8 +113,13 @@ class CatalogController extends Controller
             }
 
             // Optional image upload
+            
+            $request -> validate([
+                'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:8192',
+                ]);
+                
             if ($request->hasFile('image') && Schema::hasTable('part_images')) {
-                $path = $request->file('image')->store('parts', 'public');
+                $path = $this->storeResizedImage($request->file('image'));
                 $url = Storage::url($path);
                 PartImage::create([
                     'part_id' => $part->id,
@@ -183,7 +189,7 @@ class CatalogController extends Controller
             'warranty' => $data['warranty'] ?? null,
             ]);
 
-        // Vendor inventory upsert
+        // Vendor inventory update
         $vendorId = optional($request->user()->partsVendor)->id;
         $hasInventoryInput = $request->filled('quantity') || $request->filled('price') || $request->filled('condition') || $request->filled('availability');
         if ($vendorId && $hasInventoryInput && Schema::hasTable('parts_inventories')) {
@@ -206,7 +212,7 @@ class CatalogController extends Controller
 
         // Optional image upload (append)
         if ($request->hasFile('image') && Schema::hasTable('part_images')) {
-            $path = $request->file('image')->store('parts', 'public');
+            $path = $this->storeResizedImage($request->file('image'));
             $url = Storage::url($path);
             PartImage::create([
                 'part_id' => $product->id,
@@ -218,5 +224,78 @@ class CatalogController extends Controller
         });
 
         return redirect()->route('vendor.catalog.index')->with('success', 'Part updated.');
+    }
+
+    /**
+     * Store a resized image to the public disk and return the storage path.
+     * Falls back to original storage if GD is not available or on failure.
+     */
+    protected function storeResizedImage(UploadedFile $file, string $dir = 'parts', int $maxDim = 1200): string
+    {
+        try {
+            if (! function_exists('imagecreatetruecolor')) {
+                return $file->store($dir, 'public');
+            }
+
+            $mime = $file->getMimeType();
+            $src = null;
+            if (in_array($mime, ['image/jpeg', 'image/jpg'])) {
+                $src = @imagecreatefromjpeg($file->getPathname());
+                $ext = 'jpg';
+            } elseif ($mime === 'image/png') {
+                $src = @imagecreatefrompng($file->getPathname());
+                $ext = 'png';
+            } elseif ($mime === 'image/gif') {
+                $src = @imagecreatefromgif($file->getPathname());
+                $ext = 'gif';
+            } else {
+                return $file->store($dir, 'public');
+            }
+
+            if (! $src) {
+                return $file->store($dir, 'public');
+            }
+
+            $width = imagesx($src);
+            $height = imagesy($src);
+            $scale = min(1.0, $maxDim / max($width, $height));
+
+            if ($scale >= 1.0) {
+                // No resize needed
+                imagedestroy($src);
+                return $file->store($dir, 'public');
+            }
+
+            $newW = (int) floor($width * $scale);
+            $newH = (int) floor($height * $scale);
+            $dst = imagecreatetruecolor($newW, $newH);
+
+            if ($mime === 'image/png' || $mime === 'image/gif') {
+                imagealphablending($dst, false);
+                imagesavealpha($dst, true);
+                $transparent = imagecolorallocatealpha($dst, 0, 0, 0, 127);
+                imagefilledrectangle($dst, 0, 0, $newW, $newH, $transparent);
+            }
+
+            imagecopyresampled($dst, $src, 0, 0, 0, 0, $newW, $newH, $width, $height);
+            imagedestroy($src);
+
+            ob_start();
+            if ($mime === 'image/png') {
+                imagepng($dst, null, 6);
+            } elseif ($mime === 'image/gif') {
+                imagegif($dst);
+            } else {
+                imagejpeg($dst, null, 85);
+            }
+            imagedestroy($dst);
+            $data = ob_get_clean();
+
+            $filename = trim($dir, '/').'/'.uniqid('img_', true).'.'.$ext;
+            Storage::disk('public')->put($filename, $data);
+            return $filename;
+        } catch (\Throwable $e) {
+            return $file->store($dir, 'public');
+        }
     }
 }
